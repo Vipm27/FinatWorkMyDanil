@@ -13,11 +13,15 @@ use App\Controller\ImageCoverController;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 /**
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="Users")
  * @ApiResource(
+ *   normalizationContext={"groups" = {"read"}},
+ *   denormalizationContext={"groups" = {"write"}},
  *   collectionOperations={
  *     "get",
  *     "post" = {
@@ -81,18 +85,20 @@ class Users
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
+     * @Groups({"read"})
      */
     private ?int $id = null;
 
     /**
      * @ORM\Column(length=70)
      * @Assert\NotBlank()
+     * @Groups({"read", "write"})
      */
     public string $name;
 
     /**
      * @param Image $img
-     *
+     * @Groups({"read", "write"})
      * @ORM\ManyToOne(targetEntity="Image", cascade={"persist", "remove"})
      * @ApiProperty(iri="http://schema.org/image")
      */
@@ -100,6 +106,7 @@ class Users
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"read"})
      */
     public ?\DateTime $created_at = null;
     /**
